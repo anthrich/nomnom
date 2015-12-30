@@ -1,9 +1,0 @@
-e:\documents\visual studio 2015\Projects\Nomnom\Nomnom\bin\WindowsGL\Debug\Nomnom.exe
-e:\documents\visual studio 2015\Projects\Nomnom\Nomnom\bin\WindowsGL\Debug\Nomnom.pdb
-e:\documents\visual studio 2015\Projects\Nomnom\Nomnom\bin\WindowsGL\Debug\MonoGame.Framework.dll
-e:\documents\visual studio 2015\Projects\Nomnom\Nomnom\bin\WindowsGL\Debug\OpenTK.dll
-e:\documents\visual studio 2015\Projects\Nomnom\Nomnom\obj\x86\Debug\Nomnom.csprojResolveAssemblyReference.cache
-e:\documents\visual studio 2015\Projects\Nomnom\Nomnom\obj\x86\Debug\Nomnom.exe
-e:\documents\visual studio 2015\Projects\Nomnom\Nomnom\obj\x86\Debug\Nomnom.pdb
-e:\documents\visual studio 2015\Projects\Nomnom\Nomnom\bin\WindowsGL\Debug\FarseerPhysics MonoGame.dll
-e:\documents\visual studio 2015\Projects\Nomnom\Nomnom\bin\WindowsGL\Debug\FarseerPhysics MonoGame.pdb
