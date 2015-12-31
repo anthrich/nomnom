@@ -38,6 +38,7 @@
     <ApplicationIcon>Icon.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="GameCode\Camera2d.cs" />
     <Compile Include="GameCode\GameState.cs" />
     <Compile Include="GameCode\Nom.cs" />
     <Compile Include="GameCode\Physics.cs" />

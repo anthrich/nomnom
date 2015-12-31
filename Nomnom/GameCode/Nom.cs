@@ -62,12 +62,18 @@ namespace Nomnom.GameCode
 
         public void Update(GameTime gameTime)
         {
+            _body.LinearVelocity -= _body.LinearVelocity * 0.5f;
             Vector2 bodyPos = ConvertUnits.ToDisplayUnits(_body.Position);
             Vector2 direction = Vector2.Subtract(_movementPos, bodyPos);
             float length = direction.Length();
             if (length > 0)
             {
-                if (length < 1) _movementPos = bodyPos;
+                if (length < 1)
+                {
+                    _movementPos = bodyPos;
+                    return;
+                }
+                    
                 direction = Vector2.Normalize(direction);
 
                 float thisSpeed = _speed * gameTime.ElapsedGameTime.Milliseconds;

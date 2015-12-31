@@ -12,6 +12,7 @@ namespace Nomnom.GameCode
     {
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
+        Camera2d Camera;
         Physics Physics;
         Nom Player;
         List<Nom> Noms;
@@ -34,6 +35,7 @@ namespace Nomnom.GameCode
         protected override void Initialize()
         {
             // TODO: Add your initialization logic here
+            Camera = new Camera2d(GraphicsDevice);
             Player = new Nom(GraphicsDevice);
             Physics = new Physics();
             AddNomToGame(Player);
@@ -85,17 +87,23 @@ namespace Nomnom.GameCode
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
+            if(this.IsActive) HandleInputs();
+            Physics.Update(gameTime);
+            Noms.ForEach(nom => nom.Update(gameTime));
+            base.Update(gameTime);
+        }
+
+        private void HandleInputs()
+        {
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
             if (Mouse.GetState().LeftButton == ButtonState.Pressed)
-                Player.MoveToPosition(Mouse.GetState().Position.ToVector2());
-
-            Physics.Update(gameTime);
-
-            Noms.ForEach(nom => nom.Update(gameTime));
-
-            base.Update(gameTime);
+            {
+                Vector2 clickPos = Mouse.GetState().Position.ToVector2() + Camera.TopLeftPos;
+                Player.MoveToPosition(clickPos);
+            }
+                
         }
 
         /// <summary>
@@ -104,8 +112,12 @@ namespace Nomnom.GameCode
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.CornflowerBlue);
-            spriteBatch.Begin();
+            GraphicsDevice.Clear(Color.Chocolate);
+            Camera.Pos = Player.GetPosition();
+            spriteBatch.Begin(SpriteSortMode.BackToFront,
+                BlendState.AlphaBlend, 
+                null, null, null, null, 
+                Camera.GetTransformation());
 
             Noms.ForEach(nom => nom.Draw(spriteBatch));
 
