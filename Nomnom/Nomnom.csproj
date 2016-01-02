@@ -42,6 +42,7 @@
     <Compile Include="GameCode\GameState.cs" />
     <Compile Include="GameCode\Nom.cs" />
     <Compile Include="GameCode\Physics.cs" />
+    <Compile Include="GameCode\SpriteSheet.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

@@ -1,6 +1,7 @@
 ﻿using FarseerPhysics;
 using FarseerPhysics.Dynamics;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
@@ -12,12 +13,12 @@ namespace Nomnom.GameCode
     class Nom
     {
         Vector2 _position;
-        Texture2D _texture;
         Body _body;
         int _width = 16;
         int _height = 16;
         float _speed = 40f / 1000f;
         Vector2 _movementPos;
+        SpriteSheet _spriteSheet;
 
         #region Encapsulations
         public int Width
@@ -47,17 +48,17 @@ namespace Nomnom.GameCode
         }
         #endregion
 
-        public Nom(GraphicsDevice graphicsDevice)
+        public Nom(ContentManager content)
         {
-            _texture = new Texture2D(graphicsDevice, _width, _height);
-            Color[] data = new Color[_width * _height];
-            for (int i = 0; i < data.Length; ++i) data[i] = Color.White;
-            _texture.SetData(data);
+            _spriteSheet = new SpriteSheet("nomnom");
+            _spriteSheet.LoadTexture(content, 10, 1);
+            _spriteSheet.SetCurrentSprite(0, 0);
         }
 
         public void Draw(SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw(_texture, _position);
+            _spriteSheet.SetPos(_position);
+            _spriteSheet.Draw(spriteBatch);
         }
 
         public void Update(GameTime gameTime)

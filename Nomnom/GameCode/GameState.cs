@@ -36,13 +36,13 @@ namespace Nomnom.GameCode
         {
             // TODO: Add your initialization logic here
             Camera = new Camera2d(GraphicsDevice);
-            Player = new Nom(GraphicsDevice);
+            Player = new Nom(Content);
             Physics = new Physics();
             AddNomToGame(Player);
 
             for (int i = 0; i < 10; i++)
             {
-                Nom newNom = new Nom(GraphicsDevice);
+                Nom newNom = new Nom(Content);
                 newNom.SetPosition(i * 50, i * 50);
                 newNom.MoveToPosition(newNom.GetPosition());
                 AddNomToGame(newNom);
@@ -68,6 +68,7 @@ namespace Nomnom.GameCode
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
+            var nomnom = Content.Load<Texture2D>("nomnom");
             // TODO: use this.Content to load your game content here
         }
 
