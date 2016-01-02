@@ -3,6 +3,7 @@ using FarseerPhysics.Dynamics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using Nomnom.GameCode.Graphics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,10 +15,13 @@ namespace Nomnom.GameCode
     {
         Vector2 _position;
         Body _body;
-        int _width = 16;
-        int _height = 16;
+        int _width = 32;
+        int _height = 32;
         float _speed = 40f / 1000f;
+        float _rotationSpeed = 0.5f;
+        float _rotation;
         Vector2 _movementPos;
+        Vector2 _offsetPos;
         SpriteSheet _spriteSheet;
 
         #region Encapsulations
@@ -53,15 +57,30 @@ namespace Nomnom.GameCode
             _spriteSheet = new SpriteSheet("nomnom");
             _spriteSheet.LoadTexture(content, 10, 1);
             _spriteSheet.SetCurrentSprite(0, 0);
+            _offsetPos = new Vector2(_width * 0.5f, _height * 0.5f);
         }
 
         public void Draw(SpriteBatch spriteBatch)
         {
-            _spriteSheet.SetPos(_position);
+            _spriteSheet.SetRotation(_rotation);
+            _spriteSheet.SetPos(_position - _offsetPos);
             _spriteSheet.Draw(spriteBatch);
         }
 
         public void Update(GameTime gameTime)
+        {
+            HandleAngularVelocity(gameTime.ElapsedGameTime.Milliseconds);
+            HandleLinearVelocity(gameTime.ElapsedGameTime.Milliseconds);
+        }
+
+        private void HandleAngularVelocity(int milliseconds)
+        {
+            _body.AngularVelocity -= _body.AngularVelocity * 0.5f;
+            if (_body.Rotation < 0) _body.AngularVelocity = _rotationSpeed;
+            else if (_body.Rotation > 0) _body.AngularVelocity = -_rotationSpeed;                
+        }
+
+        private void HandleLinearVelocity(int milliseconds)
         {
             _body.LinearVelocity -= _body.LinearVelocity * 0.5f;
             Vector2 bodyPos = ConvertUnits.ToDisplayUnits(_body.Position);
@@ -74,10 +93,10 @@ namespace Nomnom.GameCode
                     _movementPos = bodyPos;
                     return;
                 }
-                    
+
                 direction = Vector2.Normalize(direction);
 
-                float thisSpeed = _speed * gameTime.ElapsedGameTime.Milliseconds;
+                float thisSpeed = _speed * milliseconds;
                 direction = direction * thisSpeed;
 
                 _body.LinearVelocity = direction;
@@ -93,6 +112,11 @@ namespace Nomnom.GameCode
         public void SetPosition(Vector2 vec)
         {
             _position = vec;
+        }
+
+        public void SetRotation(float radians)
+        {
+            _rotation = radians;
         }
 
         public Vector2 GetPosition()

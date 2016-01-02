@@ -1,6 +1,8 @@
-﻿using Microsoft.Xna.Framework;
+﻿using FarseerPhysics;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using Nomnom.GameCode.Graphics;
 using System.Collections.Generic;
 
 namespace Nomnom.GameCode
@@ -17,6 +19,10 @@ namespace Nomnom.GameCode
         Nom Player;
         List<Nom> Noms;
         List<Nom> AiNoms;
+        DebugViewXNA DebugView;
+
+        SpriteFont font;
+        Texture2D dot;
 
         public GameState()
         {
@@ -24,6 +30,36 @@ namespace Nomnom.GameCode
             AiNoms = new List<Nom>();
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
+            this.graphics.PreferredBackBufferWidth = 1280;
+            this.graphics.PreferredBackBufferHeight = 720;
+            this.graphics.ApplyChanges();
+        }
+
+        /// <summary>
+        /// LoadContent will be called once per game and is the place to load
+        /// all of your content.
+        /// </summary>
+        protected override void LoadContent()
+        {
+            // Create a new SpriteBatch, which can be used to draw textures.
+            spriteBatch = new SpriteBatch(GraphicsDevice);
+
+            var nomnom = Content.Load<Texture2D>("nomnom");
+            font = Content.Load<SpriteFont>("font");
+            dot = new Texture2D(GraphicsDevice, 1, 1);
+            Color[] data = new Color[1];
+            data[0] = Color.White;
+            dot.SetData(data);
+
+            if (DebugView == null)
+            {
+                DebugView = new DebugViewXNA(Physics.World);
+                DebugView.AppendFlags(DebugViewFlags.DebugPanel);
+                DebugView.AppendFlags(DebugViewFlags.PerformanceGraph);
+                DebugView.DefaultShapeColor = Color.White;
+                DebugView.SleepingShapeColor = Color.LightGray;
+                DebugView.LoadContent(GraphicsDevice, Content);
+            }
         }
 
         /// <summary>
@@ -57,19 +93,6 @@ namespace Nomnom.GameCode
         {
             Physics.RegisterNom(nom);
             Noms.Add(nom);
-        }
-
-        /// <summary>
-        /// LoadContent will be called once per game and is the place to load
-        /// all of your content.
-        /// </summary>
-        protected override void LoadContent()
-        {
-            // Create a new SpriteBatch, which can be used to draw textures.
-            spriteBatch = new SpriteBatch(GraphicsDevice);
-
-            var nomnom = Content.Load<Texture2D>("nomnom");
-            // TODO: use this.Content to load your game content here
         }
 
         /// <summary>
@@ -122,9 +145,27 @@ namespace Nomnom.GameCode
 
             Noms.ForEach(nom => nom.Draw(spriteBatch));
 
+            #if DEBUG
+            DebugDraw();
+            #endif
+
             spriteBatch.End();
 
+            var transform = Matrix.CreateOrthographicOffCenter(
+                ConvertUnits.ToSimUnits(Camera.TopLeftPos.X), 
+                ConvertUnits.ToSimUnits(Camera.TopLeftPos.X + GraphicsDevice.Viewport.Width),
+                ConvertUnits.ToSimUnits(Camera.TopLeftPos.Y + GraphicsDevice.Viewport.Height),
+                ConvertUnits.ToSimUnits(Camera.TopLeftPos.Y),
+                0f, 1f);
+            DebugView.RenderDebugData(ref transform);
+
             base.Draw(gameTime);
+        }
+
+        private void DebugDraw()
+        {
+            spriteBatch.DrawString(font, $"PlayerPos: {Player.GetPosition()}", Camera.TopLeftPos, Color.White);
+            spriteBatch.Draw(dot, Player.GetPosition(), Color.White);
         }
     }
 }

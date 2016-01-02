@@ -3,6 +3,7 @@ using FarseerPhysics.Collision.Shapes;
 using FarseerPhysics.Dynamics;
 using FarseerPhysics.Factories;
 using Microsoft.Xna.Framework;
+using Nomnom.GameCode.Graphics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,11 +13,13 @@ namespace Nomnom.GameCode
 {
     class Physics
     {
-        World World;
+        public World World;
+        DebugViewXNA DebugView;
 
         public Physics()
         {
             World = new World(new Microsoft.Xna.Framework.Vector2());
+            DebugView = new DebugViewXNA(World);
         }
 
         public void RegisterNom(Nom nom)
@@ -41,7 +44,9 @@ namespace Nomnom.GameCode
         {
             foreach(Body body in World.BodyList)
             {
-                (body.UserData as Nom).SetPosition(ConvertUnits.ToDisplayUnits(body.Position));
+                var thisNom = (body.UserData as Nom);
+                thisNom.SetPosition(ConvertUnits.ToDisplayUnits(body.Position));
+                thisNom.SetRotation(body.Rotation);
             }
         }
     }

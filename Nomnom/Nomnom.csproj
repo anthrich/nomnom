@@ -40,9 +40,11 @@
   <ItemGroup>
     <Compile Include="GameCode\Camera2d.cs" />
     <Compile Include="GameCode\GameState.cs" />
+    <Compile Include="GameCode\Graphics\DebugViewXNA.cs" />
+    <Compile Include="GameCode\Graphics\PrimitiveBatch.cs" />
     <Compile Include="GameCode\Nom.cs" />
     <Compile Include="GameCode\Physics.cs" />
-    <Compile Include="GameCode\SpriteSheet.cs" />
+    <Compile Include="GameCode\Graphics\SpriteSheet.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -61,6 +63,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Content\nomnom.png" />
     <Content Include="Icon.ico" />
   </ItemGroup>
   <ItemGroup>

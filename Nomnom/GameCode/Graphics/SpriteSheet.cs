@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Nomnom.GameCode
+namespace Nomnom.GameCode.Graphics
 {
     public class SpriteSheet
     {
@@ -17,9 +17,10 @@ namespace Nomnom.GameCode
         public int spriteWidth;
         public int spriteHeight;
 
-
         Texture2D _texture;
         Vector2 _position;
+        Vector2 _offsetVector;
+        float _rotation;
         int cols, rows, startX, startY;
         float scale;
 
@@ -36,11 +37,22 @@ namespace Nomnom.GameCode
             _texture = content.Load<Texture2D>(_contentName);
             spriteWidth = (int)_texture.Width / cols;
             spriteHeight = (int)_texture.Height / rows;
+            _offsetVector = new Vector2(spriteWidth * 0.5f, spriteHeight * 0.5f);
         }
 
         public void Draw(SpriteBatch app)
         {
-            app.Draw(_texture, _position, new Rectangle(startX, startY, spriteWidth, spriteHeight), Color.White);
+            app.Draw(
+                _texture,
+                _position + _offsetVector,
+                null,
+                new Rectangle(startX, startY, spriteWidth, spriteHeight),
+                new Vector2(spriteWidth * 0.5f, spriteHeight * 0.5f),
+                _rotation,
+                null,
+                null,
+                SpriteEffects.None,
+                0f);
         }
 
         public void SetScale(float scale)
@@ -59,6 +71,11 @@ namespace Nomnom.GameCode
         public void SetPos(Vector2 v)
         {
             _position = v;
+        }
+
+        public void SetRotation(float rads)
+        {
+            _rotation = rads;
         }
 
         public float GetY()

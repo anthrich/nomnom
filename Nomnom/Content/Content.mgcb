@@ -24,3 +24,9 @@
 /processorParam:TextureFormat=Color
 /build:nomnom.png
 
+#begin font.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:TextureFormat=Compressed
+/build:font.spritefont
+
