@@ -22,14 +22,23 @@ namespace Nomnom.GameCode.Graphics
         Vector2 _offsetVector;
         float _rotation;
         int cols, rows, startX, startY;
-        float scale;
+        Vector2 scale;
+        SpriteEffects _effects;
 
         public SpriteSheet(string contentName)
         {
             _contentName = contentName;
+            scale = new Vector2(1, 1);
             ID = new Random().Next(100000); // TODO: change this to something unique
         }
 
+
+        /// <summary>
+        /// Load the texture for the SpriteSheet using the given ContentManager.
+        /// </summary>
+        /// <param name="content">ContentManager used to load textures.</param>
+        /// <param name="cols">Number of cols in the SpriteSheet. Not 0 indexed.</param>
+        /// <param name="rows">Number of cols in the SpriteSheet. Not 0 indexed.</param>
         public void LoadTexture(ContentManager content, int cols, int rows)
         {
             this.cols = cols;
@@ -40,16 +49,16 @@ namespace Nomnom.GameCode.Graphics
             _offsetVector = new Vector2(spriteWidth * 0.5f, spriteHeight * 0.5f);
         }
 
-        public void Draw(SpriteBatch app)
+        public void Draw(SpriteBatch spriteBatch)
         {
-            app.Draw(
+            spriteBatch.Draw(
                 _texture,
                 _position + _offsetVector,
                 null,
                 new Rectangle(startX, startY, spriteWidth, spriteHeight),
                 new Vector2(spriteWidth * 0.5f, spriteHeight * 0.5f),
                 _rotation,
-                null,
+                scale,
                 null,
                 SpriteEffects.None,
                 0f);
@@ -57,9 +66,7 @@ namespace Nomnom.GameCode.Graphics
 
         public void SetScale(float scale)
         {
-            this.scale = scale;
-            this.spriteWidth = (int)(this.spriteWidth * scale);
-            this.spriteHeight = (int)(this.spriteHeight * scale);
+            this.scale = new Vector2(scale, scale);
         }
 
         public void SetCurrentSprite(int x, int y)
@@ -85,12 +92,17 @@ namespace Nomnom.GameCode.Graphics
 
         public int GetWidth()
         {
-            return spriteWidth > 0 ? spriteWidth : 1;
+            return spriteWidth > 0 ? (int)(spriteWidth * scale.X) : 1;
         }
 
         public int GetHeight()
         {
-            return spriteHeight > 0 ? spriteHeight : 1;
+            return spriteHeight > 0 ? (int)(spriteHeight * scale.Y) : 1;
+        }
+
+        public void SetEffects(SpriteEffects effect)
+        {
+            _effects = effect;
         }
     }
 }

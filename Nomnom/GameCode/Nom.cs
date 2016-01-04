@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Nomnom.GameCode.Graphics;
+using Nomnom.ExtensionMethods;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,71 +14,87 @@ namespace Nomnom.GameCode
 {
     class Nom
     {
+        double _movementAngle;
         Vector2 _position;
         Body _body;
-        int _width = 32;
+        int _width = 16;
         int _height = 32;
-        float _speed = 40f / 1000f;
-        float _rotationSpeed = 0.5f;
+        float _speed = 60f / 1000f;
+        float _rotationSpeed = 1f;
         float _rotation;
+        float _size = 3f;
         Vector2 _movementPos;
         Vector2 _offsetPos;
-        SpriteSheet _spriteSheet;
+        SpriteAnimation _spriteAnim;
 
         #region Encapsulations
-        public int Width
+        public float Width
         {
             get
             {
-                return _width;
-            }
-
-            set
-            {
-                _width = value;
+                return (_width / 2 - 1)  * _size ;
             }
         }
 
-        public int Height
+        public float Height
         {
             get
             {
-                return _height;
+                return _height * _size;
+            }
+        }
+
+        public double MovementAngle
+        {
+            get
+            {
+                return _movementAngle;
             }
 
-            set
+            protected set
             {
-                _height = value;
+                _movementAngle = value;
             }
         }
         #endregion
 
         public Nom(ContentManager content)
         {
-            _spriteSheet = new SpriteSheet("nomnom");
-            _spriteSheet.LoadTexture(content, 10, 1);
-            _spriteSheet.SetCurrentSprite(0, 0);
+            _spriteAnim = new SpriteAnimation("nomnom", content, 10, 1);
+            for (int i = 0; i < 10; i++)
+            {
+                _spriteAnim.AddFrame(i, 0, 100);
+            }
             _offsetPos = new Vector2(_width * 0.5f, _height * 0.5f);
         }
 
         public void Draw(SpriteBatch spriteBatch)
         {
-            _spriteSheet.SetRotation(_rotation);
-            _spriteSheet.SetPos(_position - _offsetPos);
-            _spriteSheet.Draw(spriteBatch);
+            _spriteAnim.SetScale(_size);
+            _spriteAnim.SetRotation(_rotation);
+            _spriteAnim.SetPos(_position - _offsetPos);
+            _spriteAnim.Draw(spriteBatch);
         }
 
         public void Update(GameTime gameTime)
         {
-            HandleAngularVelocity(gameTime.ElapsedGameTime.Milliseconds);
-            HandleLinearVelocity(gameTime.ElapsedGameTime.Milliseconds);
+            var msThisUpdate = gameTime.ElapsedGameTime.Milliseconds;
+            _spriteAnim.Update(msThisUpdate);
+            HandleAngularVelocity();
+            HandleLinearVelocity(msThisUpdate);
         }
 
-        private void HandleAngularVelocity(int milliseconds)
+        private void HandleAngularVelocity()
         {
-            _body.AngularVelocity -= _body.AngularVelocity * 0.5f;
-            if (_body.Rotation < 0) _body.AngularVelocity = _rotationSpeed;
-            else if (_body.Rotation > 0) _body.AngularVelocity = -_rotationSpeed;                
+            if (_body.Rotation < -.8f) _body.Rotation = -0.75f;
+            else if (_body.Rotation > .8f) _body.Rotation = 0.75f;
+            else if (_body.Rotation < -.2) _body.ApplyTorque(_rotationSpeed);
+            else if (_body.Rotation > .2) _body.ApplyTorque(-_rotationSpeed);
+        }
+
+        private void HandleMovementAngle(Vector2 direction)
+        {
+            this.MovementAngle = direction.GetAngle();
         }
 
         private void HandleLinearVelocity(int milliseconds)
@@ -85,6 +102,7 @@ namespace Nomnom.GameCode
             _body.LinearVelocity -= _body.LinearVelocity * 0.5f;
             Vector2 bodyPos = ConvertUnits.ToDisplayUnits(_body.Position);
             Vector2 direction = Vector2.Subtract(_movementPos, bodyPos);
+            HandleMovementAngle(direction);
             float length = direction.Length();
             if (length > 0)
             {

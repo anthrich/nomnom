@@ -28,8 +28,11 @@ namespace Nomnom.GameCode
             float width = ConvertUnits.ToSimUnits(nom.Width);
             float height = ConvertUnits.ToSimUnits(nom.Height);
             Vector2 pos = ConvertUnits.ToSimUnits(nom.GetPosition());
-            Body nomBody = BodyFactory.CreateRectangle(World, width, height, 1, pos, nom);
+            Body nomBody = BodyFactory.CreateEllipse(World, width, height * 0.16f, 8, 1, pos, nom);
+            //Body nomBody = BodyFactory.CreateRectangle(World, width, height, 1, pos, nom);
+            nomBody.UserData = nom;
             nomBody.BodyType = BodyType.Dynamic;
+            nomBody.AngularDamping = 3f;
             nom.RegisterBody(nomBody);
         }
 

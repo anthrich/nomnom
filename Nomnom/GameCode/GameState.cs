@@ -3,7 +3,9 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Nomnom.GameCode.Graphics;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Nomnom.GameCode
 {
@@ -22,7 +24,7 @@ namespace Nomnom.GameCode
         DebugViewXNA DebugView;
 
         SpriteFont font;
-        Texture2D dot;
+        SpriteSheet cursor;
 
         public GameState()
         {
@@ -44,12 +46,10 @@ namespace Nomnom.GameCode
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            var nomnom = Content.Load<Texture2D>("nomnom");
             font = Content.Load<SpriteFont>("font");
-            dot = new Texture2D(GraphicsDevice, 1, 1);
-            Color[] data = new Color[1];
-            data[0] = Color.White;
-            dot.SetData(data);
+            cursor = new SpriteSheet("cursor");
+            cursor.LoadTexture(Content, 1, 1);
+            cursor.SetCurrentSprite(0, 0);
 
             if (DebugView == null)
             {
@@ -57,7 +57,7 @@ namespace Nomnom.GameCode
                 DebugView.AppendFlags(DebugViewFlags.DebugPanel);
                 DebugView.AppendFlags(DebugViewFlags.PerformanceGraph);
                 DebugView.DefaultShapeColor = Color.White;
-                DebugView.SleepingShapeColor = Color.LightGray;
+                DebugView.SleepingShapeColor = Color.Red;
                 DebugView.LoadContent(GraphicsDevice, Content);
             }
         }
@@ -85,7 +85,7 @@ namespace Nomnom.GameCode
                 AiNoms.Add(newNom);
             }
 
-            this.IsMouseVisible = true;
+            this.IsMouseVisible = false;
             base.Initialize();
         }
 
@@ -114,6 +114,7 @@ namespace Nomnom.GameCode
             if(this.IsActive) HandleInputs();
             Physics.Update(gameTime);
             Noms.ForEach(nom => nom.Update(gameTime));
+            Noms = Noms.OrderBy(n => n.GetPosition().Y).ToList();
             base.Update(gameTime);
         }
 
@@ -138,19 +139,22 @@ namespace Nomnom.GameCode
         {
             GraphicsDevice.Clear(Color.Chocolate);
             Camera.Pos = Player.GetPosition();
-            spriteBatch.Begin(SpriteSortMode.BackToFront,
+            spriteBatch.Begin(SpriteSortMode.Deferred,
                 BlendState.AlphaBlend, 
                 null, null, null, null, 
                 Camera.GetTransformation());
 
             Noms.ForEach(nom => nom.Draw(spriteBatch));
 
-            #if DEBUG
+#if DEBUG
             DebugDraw();
-            #endif
-
+#endif      
+            var pos = Mouse.GetState().Position.ToVector2() + Camera.TopLeftPos;
+            cursor.SetPos(pos);
+            cursor.Draw(spriteBatch);
             spriteBatch.End();
 
+            #if DEBUG
             var transform = Matrix.CreateOrthographicOffCenter(
                 ConvertUnits.ToSimUnits(Camera.TopLeftPos.X), 
                 ConvertUnits.ToSimUnits(Camera.TopLeftPos.X + GraphicsDevice.Viewport.Width),
@@ -158,6 +162,7 @@ namespace Nomnom.GameCode
                 ConvertUnits.ToSimUnits(Camera.TopLeftPos.Y),
                 0f, 1f);
             DebugView.RenderDebugData(ref transform);
+            #endif
 
             base.Draw(gameTime);
         }
@@ -165,7 +170,7 @@ namespace Nomnom.GameCode
         private void DebugDraw()
         {
             spriteBatch.DrawString(font, $"PlayerPos: {Player.GetPosition()}", Camera.TopLeftPos, Color.White);
-            spriteBatch.Draw(dot, Player.GetPosition(), Color.White);
+            spriteBatch.DrawString(font, $"Movement angle: {Player.MovementAngle}", Camera.TopLeftPos + new Vector2(0, 40), Color.White);
         }
     }
 }

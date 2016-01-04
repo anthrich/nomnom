@@ -9,6 +9,7 @@ namespace Nomnom
     /// </summary>
     public static class Program
     {
+        public static Random RNG = new Random();
         /// <summary>
         /// The main entry point for the application.
         /// </summary>

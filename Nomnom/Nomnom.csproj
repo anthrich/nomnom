@@ -38,10 +38,12 @@
     <ApplicationIcon>Icon.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="ExtensionMethods\Vector2Extensions.cs" />
     <Compile Include="GameCode\Camera2d.cs" />
     <Compile Include="GameCode\GameState.cs" />
     <Compile Include="GameCode\Graphics\DebugViewXNA.cs" />
     <Compile Include="GameCode\Graphics\PrimitiveBatch.cs" />
+    <Compile Include="GameCode\Graphics\SpriteAnimation.cs" />
     <Compile Include="GameCode\Nom.cs" />
     <Compile Include="GameCode\Physics.cs" />
     <Compile Include="GameCode\Graphics\SpriteSheet.cs" />
