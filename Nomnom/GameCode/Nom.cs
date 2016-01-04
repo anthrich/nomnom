@@ -20,7 +20,7 @@ namespace Nomnom.GameCode
         int _width = 16;
         int _height = 32;
         float _speed = 60f / 1000f;
-        float _rotationSpeed = 1f;
+        float _rotationSpeed = 0.5f;
         float _rotation;
         float _size = 3f;
         Vector2 _movementPos;
@@ -95,6 +95,8 @@ namespace Nomnom.GameCode
         private void HandleMovementAngle(Vector2 direction)
         {
             this.MovementAngle = direction.GetAngle();
+            if (MovementAngle > 180) _spriteAnim.SetEffects(SpriteEffects.FlipHorizontally);
+            else _spriteAnim.SetEffects(SpriteEffects.None);
         }
 
         private void HandleLinearVelocity(int milliseconds)
@@ -102,7 +104,7 @@ namespace Nomnom.GameCode
             _body.LinearVelocity -= _body.LinearVelocity * 0.5f;
             Vector2 bodyPos = ConvertUnits.ToDisplayUnits(_body.Position);
             Vector2 direction = Vector2.Subtract(_movementPos, bodyPos);
-            HandleMovementAngle(direction);
+            
             float length = direction.Length();
             if (length > 0)
             {
@@ -112,11 +114,10 @@ namespace Nomnom.GameCode
                     return;
                 }
 
+                HandleMovementAngle(direction);
                 direction = Vector2.Normalize(direction);
-
                 float thisSpeed = _speed * milliseconds;
                 direction = direction * thisSpeed;
-
                 _body.LinearVelocity = direction;
             }
         }

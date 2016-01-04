@@ -17,6 +17,7 @@ namespace Nomnom.GameCode
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
         Camera2d Camera;
+        Point MousePosition;
         Physics Physics;
         Nom Player;
         List<Nom> Noms;
@@ -123,7 +124,7 @@ namespace Nomnom.GameCode
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
-            if (Mouse.GetState().LeftButton == ButtonState.Pressed)
+            if (Mouse.GetState().LeftButton == ButtonState.Pressed && GraphicsDevice.Viewport.Bounds.Contains(MousePosition))
             {
                 Vector2 clickPos = Mouse.GetState().Position.ToVector2() + Camera.TopLeftPos;
                 Player.MoveToPosition(clickPos);
@@ -137,6 +138,7 @@ namespace Nomnom.GameCode
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
+            MousePosition = Mouse.GetState().Position;
             GraphicsDevice.Clear(Color.Chocolate);
             Camera.Pos = Player.GetPosition();
             spriteBatch.Begin(SpriteSortMode.Deferred,

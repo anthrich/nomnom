@@ -60,7 +60,7 @@ namespace Nomnom.GameCode.Graphics
                 _rotation,
                 scale,
                 null,
-                SpriteEffects.None,
+                _effects,
                 0f);
         }
 
