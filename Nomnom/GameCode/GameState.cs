@@ -26,6 +26,7 @@ namespace Nomnom.GameCode
 
         SpriteFont font;
         SpriteSheet cursor;
+        SpriteAnimation movePointer;
 
         public GameState()
         {
@@ -50,7 +51,15 @@ namespace Nomnom.GameCode
             font = Content.Load<SpriteFont>("font");
             cursor = new SpriteSheet("cursor");
             cursor.LoadTexture(Content, 1, 1);
+            cursor.SetScale(2f);
             cursor.SetCurrentSprite(0, 0);
+
+            movePointer = new SpriteAnimation("movepointer", Content, 8, 1);
+            movePointer.SetScale(1f);
+            for (int i = 0; i < 8; i++)
+            {
+                movePointer.AddFrame(i, 0, 50);
+            }
 
             if (DebugView == null)
             {
@@ -113,6 +122,7 @@ namespace Nomnom.GameCode
         protected override void Update(GameTime gameTime)
         {
             if(this.IsActive) HandleInputs();
+            movePointer.Update(gameTime.ElapsedGameTime.Milliseconds);
             Physics.Update(gameTime);
             Noms.ForEach(nom => nom.Update(gameTime));
             Noms = Noms.OrderBy(n => n.GetPosition().Y).ToList();
@@ -128,8 +138,8 @@ namespace Nomnom.GameCode
             {
                 Vector2 clickPos = Mouse.GetState().Position.ToVector2() + Camera.TopLeftPos;
                 Player.MoveToPosition(clickPos);
-            }
-                
+                movePointer.SetPos(clickPos - new Vector2(movePointer.GetWidth() / 2, movePointer.GetHeight() / 2));
+            }                
         }
 
         /// <summary>
@@ -146,11 +156,14 @@ namespace Nomnom.GameCode
                 null, null, null, null, 
                 Camera.GetTransformation());
 
+            movePointer.Draw(spriteBatch);
+
             Noms.ForEach(nom => nom.Draw(spriteBatch));
 
-#if DEBUG
+            #if DEBUG
             DebugDraw();
-#endif      
+            #endif
+
             var pos = Mouse.GetState().Position.ToVector2() + Camera.TopLeftPos;
             cursor.SetPos(pos);
             cursor.Draw(spriteBatch);

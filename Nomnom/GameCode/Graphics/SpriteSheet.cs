@@ -21,6 +21,7 @@ namespace Nomnom.GameCode.Graphics
         Vector2 _position;
         Vector2 _offsetVector;
         float _rotation;
+        Vector2 _centerOfRotation;
         int cols, rows, startX, startY;
         Vector2 scale;
         SpriteEffects _effects;
@@ -46,17 +47,17 @@ namespace Nomnom.GameCode.Graphics
             _texture = content.Load<Texture2D>(_contentName);
             spriteWidth = (int)_texture.Width / cols;
             spriteHeight = (int)_texture.Height / rows;
-            _offsetVector = new Vector2(spriteWidth * 0.5f, spriteHeight * 0.5f);
+            SetOffsetVector();
         }
 
         public void Draw(SpriteBatch spriteBatch)
         {
             spriteBatch.Draw(
                 _texture,
-                _position + _offsetVector,
+                _position,
                 null,
                 new Rectangle(startX, startY, spriteWidth, spriteHeight),
-                new Vector2(spriteWidth * 0.5f, spriteHeight * 0.5f),
+                _centerOfRotation,
                 _rotation,
                 scale,
                 null,
@@ -67,6 +68,7 @@ namespace Nomnom.GameCode.Graphics
         public void SetScale(float scale)
         {
             this.scale = new Vector2(scale, scale);
+            SetOffsetVector();
         }
 
         public void SetCurrentSprite(int x, int y)
@@ -80,9 +82,10 @@ namespace Nomnom.GameCode.Graphics
             _position = v;
         }
 
-        public void SetRotation(float rads)
+        public void SetRotation(float rads, Vector2 centerOfRotation)
         {
             _rotation = rads;
+            _centerOfRotation = centerOfRotation;
         }
 
         public float GetY()
@@ -103,6 +106,11 @@ namespace Nomnom.GameCode.Graphics
         public void SetEffects(SpriteEffects effect)
         {
             _effects = effect;
+        }
+
+        private void SetOffsetVector()
+        {
+            _offsetVector = new Vector2(GetWidth() * 0.5f, GetHeight() * 0.5f);
         }
     }
 }

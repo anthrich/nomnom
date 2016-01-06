@@ -121,9 +121,9 @@ namespace Nomnom.GameCode.Graphics
             spriteSheet.SetScale(scale);
         }
 
-        internal void SetRotation(float rads)
+        internal void SetRotation(float rads, Vector2 centerOfRotation)
         {
-            spriteSheet.SetRotation(rads);
+            spriteSheet.SetRotation(rads, centerOfRotation);
         }
 
         public void SetEffects(SpriteEffects effect)

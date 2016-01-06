@@ -17,7 +17,7 @@ namespace Nomnom.GameCode
         double _movementAngle;
         Vector2 _position;
         Body _body;
-        int _width = 16;
+        int _width = 18;
         int _height = 32;
         float _speed = 60f / 1000f;
         float _rotationSpeed = 0.5f;
@@ -25,6 +25,8 @@ namespace Nomnom.GameCode
         float _size = 3f;
         Vector2 _movementPos;
         Vector2 _offsetPos;
+        Vector2 _centerOfRotation;
+        float _spriteBottomOffset = 7;
         SpriteAnimation _spriteAnim;
 
         #region Encapsulations
@@ -65,14 +67,15 @@ namespace Nomnom.GameCode
             {
                 _spriteAnim.AddFrame(i, 0, 100);
             }
-            _offsetPos = new Vector2(_width * 0.5f, _height * 0.5f);
+            _offsetPos = new Vector2(0, -_spriteBottomOffset * _size);
+            _centerOfRotation = new Vector2(_width * 0.5f, _height - _spriteBottomOffset);
         }
 
         public void Draw(SpriteBatch spriteBatch)
         {
             _spriteAnim.SetScale(_size);
-            _spriteAnim.SetRotation(_rotation);
-            _spriteAnim.SetPos(_position - _offsetPos);
+            _spriteAnim.SetRotation(_rotation, _centerOfRotation);
+            _spriteAnim.SetPos(_position);
             _spriteAnim.Draw(spriteBatch);
         }
 
